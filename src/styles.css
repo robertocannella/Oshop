@@ -1,1 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+@import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
+@import "../node_modules/datatables.net-dt/css/jquery.dataTables.css";
+
+body {
+  height: 100%;
+  margin: 2px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+button {
+  margin: 3px;
+}
+.btn {
+  margin-left: 2px;
+}
+.mat-button {
+  margin: 2px;
+}
+.mat-label {
+  margin: 2px;
+}
+.mat-elevaiont-z8 {
+  align-self: center;
+}
+.product-table {
+  align-self: auto;
+  width: 100%;
+}

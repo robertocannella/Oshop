@@ -1,0 +1,23 @@
+.card-footer {
+  padding: 0px;
+}
+.card {
+  margin-bottom: 20px;
+}
+
+h5 {
+  font-size: 1.2rem;
+}
+.cart-tool {
+  margin: 0px;
+  vertical-align: middle;
+}
+.cart-tool-minus {
+  margin: 0px;
+  vertical-align: middle;
+}
+.cart-tool-plus {
+  margin: 0px;
+  vertical-align: middle;
+  float: right;
+}
