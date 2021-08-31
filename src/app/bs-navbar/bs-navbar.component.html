@@ -14,16 +14,26 @@
                  aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div [class]="isActive ? 'show' : ''"
+    <div [class]="miniMenuToggle ? 'show' : ''"
          class="collapse navbar-collapse" 
          id="navbarSupportedContent"
          >
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="shopping-cart">Shopping Cart</a>
+          <a class="nav-link position-relative" routerLink="shopping-cart">
+            Shopping Cart
+            <span class="badge bg-warning 
+                        position-absolute text-dark
+                       translate-middle top-40 start-100 
+                       rounded-pill"
+                       *ngIf="cart$ | async as cart"
+                       >
+                       {{ cart.getTotalItemsCount() }}
+              </span>
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="order-success">Order Success</a>
+          <a class="nav-link" routerLink="order-success">&nbsp;Order Success</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" routerLink="check-out">Check Out</a>

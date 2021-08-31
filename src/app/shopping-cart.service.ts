@@ -1,28 +1,37 @@
-import { take } from 'rxjs/operators';
-import { AngularFirestore,  } from '@angular/fire/firestore';
+import { map, take } from 'rxjs/operators';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
 import { Product } from './models/app.product';
+import { ShoppingCart, ShoppingCartId, ShoppingCartItem } from './models/shopping-cart';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShoppingCartService {
   
-  constructor(private afs: AngularFirestore) {}
+  constructor(private afs: AngularFirestore) {
+  
+  }
 
   private create() {
     return this.afs.collection('shopping-carts').add({
       dateCreated: new Date().getTime()
     });
   }
-  async getCart() {
+  async getCart() : Promise<Observable<ShoppingCart>>{
     let cartId = await this.getOrCreateCartId();
-    return this.afs.collection('shopping-carts').ref.doc(cartId).get();
+    return this.afs.collection('shopping-carts').doc(cartId).collection<ShoppingCartItem>('items').valueChanges({idField: 'id'}).pipe(
+      map(items => {
+        new ShoppingCart(items)
+        return new ShoppingCart(items)
+      })
+    );
 
   }
   async getCartItems() {
-      let cartId = await this.getOrCreateCartId();
-    return this.afs.collection('shopping-carts').doc(cartId).collection('items');
+    let cartId = await this.getOrCreateCartId();
+    return this.afs.collection('shopping-carts').doc(cartId).collection('items').valueChanges();
 
   }
   private getItem(cartId: string, productId: string) {
@@ -46,7 +55,11 @@ export class ShoppingCartService {
   async addToCart(product: Product) {
     this.updateItemQuantity(product, 1);
   }
-
+  getCartId() {
+    let cartId = localStorage.getItem('cartId');
+    console.log(cartId);
+    return cartId;
+  }
   private async getOrCreateCartId(): Promise<string>{
     let cartId = localStorage.getItem('cartId');
     if (cartId) return cartId;
@@ -57,6 +70,3 @@ export class ShoppingCartService {
   }
 }
 
-export interface ShoppingCart{
-   id: string
-}

@@ -1,8 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~bootstrap/dist/css/bootstrap.min.css";
+/* @import "~bootstrap/dist/css/bootstrap.min.css";
 @import "~bootstrap-icons/font/bootstrap-icons.css";
 @import "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css";
-@import "../node_modules/datatables.net-dt/css/jquery.dataTables.css";
+@import "../node_modules/datatables.net-dt/css/jquery.dataTables.css"; 
+
+all imports moved to angular.json
+*/
 
 body {
   height: 100%;

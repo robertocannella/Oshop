@@ -1,7 +1,7 @@
 import { Observable, pipe } from 'rxjs';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
-import { Product } from './models/app.product';
+import { Product, ProductId } from './models/app.product';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -12,15 +12,13 @@ export class ProductService {
   constructor(private afs: AngularFirestore) { }
 
   create(product: any) {
-    return this.afs.collection('products').doc().set(product);
+    return this.afs.collection<ProductId>('products').doc().set(product);
   }
-  getAll(): Observable<any> {
-    return this.afs.collection('products').snapshotChanges()
-          .pipe(
+  getAll(): Observable<ProductId[]> {
+    return this.afs.collection('products').snapshotChanges().pipe(
             map((actions: any) => {
               return actions.map((a: any) => {
-                
-                    const object = a.payload.doc.data() as Product;
+                    const object = a.payload.doc.data() as ProductId;
                     object.id = a.payload.doc.id;
                     return object;
         });

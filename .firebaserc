@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "o-store-e0c91"
+  },
+  "targets": {
+    "o-store-e0c91": {
+      "hosting": {
+        "oshop": [
+          "o-store-e0c91"
+        ]
+      }
+    }
+  }
+}
