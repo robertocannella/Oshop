@@ -1,7 +1,7 @@
 import { ShoppingCart } from './../models/shopping-cart';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ShoppingCartService } from './../shopping-cart.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -9,23 +9,17 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
   styleUrls: ['./shopping-cart.component.css']
 })
   
-export class ShoppingCartComponent implements OnInit, OnDestroy {
-  cart!: ShoppingCart
-  subscription = new Subscription;
- 
+export class ShoppingCartComponent implements OnInit {
+  cart$!: Observable<ShoppingCart>;
+
+  constructor(private cartSerive: ShoppingCartService) { }
   
-constructor(private cartSerive: ShoppingCartService) { }
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
+  async ngOnInit() {
+    this.cart$ = await this.cartSerive.getCart();
 
 
-async ngOnInit() {
-   this.subscription = (await this.cartSerive
-     .getCart()).subscribe(cart => {
-       this.cart = cart
-       console.log('Shopping Cart: ',cart)
-     } );
-  
+    this.cart$.subscribe(cart => console.log(cart));
   }
+  
+  
 }
