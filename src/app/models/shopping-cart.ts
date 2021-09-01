@@ -36,5 +36,6 @@ export class ShoppingCartItem {
 }
 
 export interface ShoppingCartId extends ShoppingCart{
+    
     id: string
 }

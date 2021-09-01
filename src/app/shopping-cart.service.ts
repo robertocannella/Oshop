@@ -28,6 +28,22 @@ export class ShoppingCartService {
     );
 
   }
+  async getCartItemsAsObject(): Promise<Observable<ShoppingCart>> {
+    let cartId = await this.getOrCreateCartId();
+    return this.afs.collection('shopping-carts').doc(cartId).collection<ShoppingCartItem>('items').snapshotChanges().pipe(
+      map((actions: any) => {
+        return actions.map((a: any) => {
+
+          let product = a.payload.doc.data()['product'];
+          let quantity = a.payload.doc.data()['quantity'];
+          let cartItem = new ShoppingCartItem(product, quantity);
+
+          return cartItem;
+        })
+      })
+    );
+  }
+
   async getCartItems() {
     let cartId = await this.getOrCreateCartId();
     return this.afs.collection('shopping-carts').doc(cartId).collection('items').valueChanges();

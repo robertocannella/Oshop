@@ -1,7 +1,7 @@
 import { ShoppingCart, ShoppingCartItem } from './../models/shopping-cart';
 import { Observable } from 'rxjs';
 import { ShoppingCartService } from './../shopping-cart.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { keyframes } from '@angular/animations';
 
@@ -13,6 +13,7 @@ import { keyframes } from '@angular/animations';
   
 export class ShoppingCartComponent implements OnInit {
   cart$!: Observable<ShoppingCart>;
+  cartWithItemsObject$!: Observable<ShoppingCart>;
   cartPriceModel: ShoppingCartItem[] = [];
   constructor(private cartSerive: ShoppingCartService) { }
   
@@ -27,7 +28,9 @@ export class ShoppingCartComponent implements OnInit {
         this.cartPriceModel.push(new ShoppingCartItem(item.product, item.quantity ));
       })
     });
-
+    this.cartWithItemsObject$ = await this.cartSerive.getCartItemsAsObject();
+    this.cartWithItemsObject$.subscribe(x => console.log(x));
+    
 /// first way
 
     // this.cart$.pipe(take(1)).subscribe(x => {
@@ -38,4 +41,5 @@ export class ShoppingCartComponent implements OnInit {
     // });
 
   }
+
 }
