@@ -6,16 +6,13 @@ import { Product } from 'src/app/models/app.product';
 export class ShoppingCart {
     dateCreated!: number;
 
-    constructor(public items?: ShoppingCartItem[]) {
-        //this.dateCreated = new Date().getTime();
-        
-    }
+    constructor(public items: ShoppingCartItem[]) { }
+    
     get cartItems() {
-        this.items?.forEach((item) => {
-            console.log(item.totalPrice)
-        })
-        return this.items;
+        
+        return this.items
     }
+
      public getTotalItemsCount(): number {
         let count = 0;
         if (this.items) {
@@ -26,11 +23,12 @@ export class ShoppingCart {
         return count;
     }
 
-    
 }
 
 export class ShoppingCartItem {
-    constructor(public  product: Product, public quantity: number) { }
+    constructor(public product: Product, public quantity: number) {
+        
+    }
 
     get totalPrice() {
         return +this.product.price * this.quantity;

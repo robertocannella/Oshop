@@ -23,8 +23,7 @@ export class ShoppingCartService {
     let cartId = await this.getOrCreateCartId();
     return this.afs.collection('shopping-carts').doc(cartId).collection<ShoppingCartItem>('items').valueChanges({idField: 'id'}).pipe(
       map(items => {
-        new ShoppingCart(items)
-        return new ShoppingCart(items)
+        return new ShoppingCart(items);
       })
     );
 
