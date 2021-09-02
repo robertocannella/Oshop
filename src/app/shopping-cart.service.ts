@@ -26,24 +26,25 @@ export class ShoppingCartService {
         return new ShoppingCart(items);
       })
     );
-
   }
-  async getCartItemsAsObject(): Promise<Observable<ShoppingCart>> {
+// Currently this ShoppingCartItem is mapped into a ShoppingCart object from calling component.
+// Look to use rxjs operators to accomplish all of the logic here, possible store the array inside
+// one observable and supply it to the next as a parameter- Roberto Cannella
+  
+  async getCartItemsAsObject(): Promise<Observable<ShoppingCartItem[]>> {
     let cartId = await this.getOrCreateCartId();
-    return this.afs.collection('shopping-carts').doc(cartId).collection<ShoppingCartItem>('items').snapshotChanges().pipe(
+    return this.afs.collection('shopping-carts').doc(cartId).collection('items').snapshotChanges().pipe(
       map((actions: any) => {
         return actions.map((a: any) => {
-
           let product = a.payload.doc.data()['product'];
           let quantity = a.payload.doc.data()['quantity'];
-          let cartItem = new ShoppingCartItem(product, quantity);
-
-          return cartItem;
+          return new ShoppingCartItem(product, quantity);
         })
       })
     );
   }
 
+  
   async getCartItems() {
     let cartId = await this.getOrCreateCartId();
     return this.afs.collection('shopping-carts').doc(cartId).collection('items').valueChanges();
@@ -60,7 +61,12 @@ export class ShoppingCartService {
     // otherwise, increment the quantity
     let item$ = this.getItem(cartId, product.id);
     item$.get().pipe(take(1)).subscribe((item) => {
-         item$.set ({ product: product, quantity: ((item.data()?.quantity || 0)  + change) }) 
+      let quantity = ((item.data()?.quantity || 0) + change);
+      if (quantity === 0) item$.delete();
+      else item$.set({
+        product: product,
+        quantity: quantity
+      })
       });
   }
   async removeFromCart(product: Product) {

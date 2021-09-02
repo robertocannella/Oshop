@@ -1,9 +1,7 @@
 import { ShoppingCart, ShoppingCartItem } from './../models/shopping-cart';
 import { Observable } from 'rxjs';
 import { ShoppingCartService } from './../shopping-cart.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { take } from 'rxjs/operators';
-import { keyframes } from '@angular/animations';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -12,34 +10,16 @@ import { keyframes } from '@angular/animations';
 })
   
 export class ShoppingCartComponent implements OnInit {
-  cart$!: Observable<ShoppingCart>;
-  cartWithItemsObject$!: Observable<ShoppingCart>;
-  cartPriceModel: ShoppingCartItem[] = [];
+
+  cart$!: Observable<ShoppingCartItem[]>;
+  shoppingCart!: ShoppingCart;
   constructor(private cartSerive: ShoppingCartService) { }
   
   async ngOnInit() {
-    this.cart$ = await this.cartSerive.getCart();
 
-
-// second way
-    this.cart$.subscribe(x => {
-      let arr = x['items']
-      arr.forEach(item => {
-        this.cartPriceModel.push(new ShoppingCartItem(item.product, item.quantity ));
-      })
+    this.cart$ = await this.cartSerive.getCartItemsAsObject();
+    this.cart$.subscribe((cartItems) => {
+      this.shoppingCart = new ShoppingCart(cartItems);
     });
-    this.cartWithItemsObject$ = await this.cartSerive.getCartItemsAsObject();
-    this.cartWithItemsObject$.subscribe(x => console.log(x));
-    
-/// first way
-
-    // this.cart$.pipe(take(1)).subscribe(x => {
-    //   x.items?.forEach(cartItem => {
-    //     this.cartPriceModel.push(new ShoppingCartItem(cartItem.product, cartItem.quantity))
-    //     console.log(this.cartPriceModel)
-    //   })
-    // });
-
   }
-
 }

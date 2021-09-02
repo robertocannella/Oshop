@@ -14,24 +14,9 @@ export class ProductCardComponent  {
   @Input('shopping-cart') shoppingCart!: ShoppingCart;
 
   constructor(private cartService: ShoppingCartService) { }
-  removeFromCart() {
-    this.cartService.removeFromCart(this.product);
-  }
+
   addToCart() {
     this.cartService.addToCart(this.product);
-  }
-  getQuantity() {
-    if (!this.shoppingCart) return 0;
-    if (this.shoppingCart.items?.length === 0) return 0;
-
-
-    let quantity = 0;
-    this.shoppingCart.items?.forEach(element => {
-      if (element.product.id === this.product.id) 
-        quantity = element.quantity;
-    })
-
-    return quantity;
   }
   
 }
