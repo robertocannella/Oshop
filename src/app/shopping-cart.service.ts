@@ -9,19 +9,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ShoppingCartService {
-  
+  cartId!: string;
   constructor(private afs: AngularFirestore) {
-  
+    this.getOrCreateCartId();
   }
 
-  private create() {
-    return this.afs.collection('shopping-carts').add({
-      dateCreated: new Date().getTime()
-    });
-  }
   async getCart() : Promise<Observable<ShoppingCart>>{
     let cartId = await this.getOrCreateCartId();
-    return this.afs.collection('shopping-carts').doc(cartId).collection<ShoppingCartItem>('items').valueChanges({idField: 'id'}).pipe(
+    return this.afs.collection('shopping-carts').doc(this.cartId).collection<ShoppingCartItem>('items').valueChanges({idField: 'id'}).pipe(
       map(items => {
         return new ShoppingCart(items);
       })
@@ -33,7 +28,7 @@ export class ShoppingCartService {
   
   async getCartItemsAsObject(): Promise<Observable<ShoppingCartItem[]>> {
     let cartId = await this.getOrCreateCartId();
-    return this.afs.collection('shopping-carts').doc(cartId).collection('items').snapshotChanges().pipe(
+    return this.afs.collection('shopping-carts').doc(this.cartId).collection('items').snapshotChanges().pipe(
       map((actions: any) => {
         return actions.map((a: any) => {
           let product = a.payload.doc.data()['product'];
@@ -47,11 +42,11 @@ export class ShoppingCartService {
   
   async getCartItems() {
     let cartId = await this.getOrCreateCartId();
-    return this.afs.collection('shopping-carts').doc(cartId).collection('items').valueChanges();
+    return this.afs.collection('shopping-carts').doc(this.cartId).collection('items').valueChanges();
 
   }
   private getItem(cartId: string, productId: string) {
-    return this.afs.collection('shopping-carts').doc(cartId).collection('items').doc(productId);
+    return this.afs.collection('shopping-carts').doc(this.cartId).collection('items').doc(productId);
   }
 
   async updateItemQuantity(product: Product, change: number) {
@@ -59,7 +54,7 @@ export class ShoppingCartService {
     // check for a reference for this product in the current shopping cart
     // if there is no reference, add it and set quantity to 1
     // otherwise, increment the quantity
-    let item$ = this.getItem(cartId, product.id);
+    let item$ = this.getItem(this.cartId, product.id);
     item$.get().pipe(take(1)).subscribe((item) => {
       let quantity = ((item.data()?.quantity || 0) + change);
       if (quantity === 0) item$.delete();
@@ -81,13 +76,13 @@ export class ShoppingCartService {
     console.log(cartId);
     return cartId;
   }
-  private async getOrCreateCartId(): Promise<string>{
+  private async getOrCreateCartId(){
     let cartId = localStorage.getItem('cartId');
-    if (cartId) return cartId;
+    if (cartId) return;
 
-    let result: any = await this.create();
-    localStorage.setItem('cartId', result.id);
-    return result.id;  
+    this.cartId = this.afs.createId();
+    localStorage.setItem('cartId', this.cartId)
+
   }
 }
 
