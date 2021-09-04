@@ -13,12 +13,16 @@ export class ProductQuantityComponent {
   @Input('product') product!: Product;
   @Input('shopping-cart') shoppingCart!: ShoppingCart;
 
-  constructor(private cartService: ShoppingCartService) { }
+  cartId;
+  constructor(private cartService: ShoppingCartService) {
+    this.cartId = this.cartService.getOrCreateCartId();
+  }
+
   removeFromCart() {
-    this.cartService.removeFromCart(this.product);
+    this.cartService.removeFromCart(this.product, this.cartId);
   }
   addToCart() {
-    this.cartService.addToCart(this.product);
+    this.cartService.addToCart(this.product, this.cartId);
   }
 
 }
