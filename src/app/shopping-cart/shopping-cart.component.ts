@@ -1,5 +1,5 @@
 import { ShoppingCart, ShoppingCartItem } from './../models/shopping-cart';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ShoppingCartService } from './../shopping-cart.service';
 import { Component, OnInit } from '@angular/core';
 
@@ -13,14 +13,21 @@ export class ShoppingCartComponent implements OnInit {
 
   cart$!: Observable<ShoppingCartItem[]>;
   shoppingCart!: ShoppingCart;
+  subscription!: Subscription;
   constructor(private cartSerive: ShoppingCartService) { }
   
   async ngOnInit() {
 
     let cartId = this.cartSerive.getOrCreateCartId();
     this.cart$ = await this.cartSerive.getCartItemsAsObject(cartId);
+    
     this.cart$.subscribe((cartItems) => {
       this.shoppingCart = new ShoppingCart(cartItems);
     });
+  }
+
+  clearCart() {
+    let cartId = this.cartSerive.getOrCreateCartId();
+    this.cartSerive.clearCart(cartId);
   }
 }

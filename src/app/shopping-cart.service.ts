@@ -1,16 +1,28 @@
 import { map, take } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
-import { Product } from './models/app.product';
+import { Product, ProductId } from './models/app.product';
 import { ShoppingCart, ShoppingCartId, ShoppingCartItem } from './models/shopping-cart';
-import { Observable } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { forEachChild } from 'typescript';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShoppingCartService {
-  constructor(private afs: AngularFirestore) {
- 
+  subscription!: Subscription;
+  constructor(private afs: AngularFirestore) { }
+  
+
+  async clearCart(cartId: string) {
+    let $items = await this.getCartItems(cartId)
+
+    this.subscription = $items.pipe(take(1)).subscribe((x: Array<any>) => {
+      x.forEach((item: any) =>
+        this.afs.collection('shopping-carts').doc(cartId).collection('items')
+          .doc(item.product.id).delete())
+    });
+    
   }
 
   async getCart(cartId: string) : Promise<Observable<ShoppingCart>>{
