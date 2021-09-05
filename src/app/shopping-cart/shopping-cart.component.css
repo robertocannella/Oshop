@@ -1,0 +1,13 @@
+.quantity {
+  width: 230px;
+}
+.total-price {
+  width: 200px;
+}
+.thumbnail {
+  margin-left: 3px;
+  width: 80px;
+  height: 80px;
+  border-radius: 100%;
+  background-size: cover;
+}

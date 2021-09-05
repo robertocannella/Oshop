@@ -1,30 +1,36 @@
 <h1>Shopping Cart</h1>
-<ng-container *ngIf="shoppingCart">
+<div class="row col-8" *ngIf="shoppingCart">
 
     <p>You have {{ shoppingCart.totalItemsCount }} items in your shopping cart.</p>
 <table class="table">
     <thead>
         <tr>
+            <th></th>
             <th>Product</th>
-            <th>Quantity</th>
-            <th>Total Price</th>
+            <th class="text-center quantity" >Quantity</th>
+            <th class="text-end total-price">Total Price</th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let item of shoppingCart.items">
-
+            <td>
+                <div class="thumbnail" [style.backgroundImage]="'url(' + item.product.imageUrl +')' "></div>
+            </td>
             <td>{{ item.product.title }}</td>
-           <app-product-quantity [product]="item.product" [shopping-cart]="shoppingCart"></app-product-quantity>
-            <td>{{ item.totalPrice | currency:'USD':'symbol'}}</td>
+            <td>
+                <app-product-quantity  [product]="item.product" [shopping-cart]="shoppingCart"></app-product-quantity>
+            </td>
+            <td class="text-end">{{ item.totalPrice | currency:'USD':'symbol'}}</td>
         </tr>
     </tbody>
     <tfoot>
         <tr>
             <th></th>
             <th></th>
-            <th>{{ shoppingCart.totalPrice | currency:'USD':'symbol' }} </th>
+            <th></th>
+            <th class="text-end">{{ shoppingCart.totalPrice | currency:'USD':'symbol' }} </th>
         </tr>
     </tfoot>
 </table>
-<button (click)="clearCart()" class="btn btn-danger btn-sm">Clear Cart</button>
-</ng-container>
+</div>
+<button (click)="clearCart()" class="btn btn-danger btn-sm" [class.disabled]="isEmpty">Clear Cart</button>
