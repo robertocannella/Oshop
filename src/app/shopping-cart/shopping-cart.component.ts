@@ -25,7 +25,6 @@ export class ShoppingCartComponent implements OnInit, OnDestroy {
 
     this.subscription = this.cart$.subscribe((shoppingCartItemArray: ShoppingCartItem[]) => {
       this.shoppingCart = new ShoppingCart(shoppingCartItemArray);
-      console.log(this.shoppingCart)
       this.isEmpty = (this.shoppingCart.totalItemsCount == 0);
     });
 

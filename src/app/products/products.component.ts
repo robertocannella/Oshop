@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ProductService } from './../product.service';
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Product } from '../models/app.product';
-import {  Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 
 
 @Component({
@@ -14,52 +14,45 @@ import {  Subscription } from 'rxjs';
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css']
 })
-export class ProductsComponent implements OnInit, OnDestroy{
+export class ProductsComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = []
   category: string | null = '';
   showActions = false;
-  cart: any;
-  subscription= new Subscription;
-
+  cart$!: Observable<ShoppingCart>;
 
   constructor(
-    productService: ProductService,
+    private productService: ProductService,
     private shoppingCartService: ShoppingCartService,
-    route: ActivatedRoute) {
-    
-  
-    
-    productService.getAll()
+    private route: ActivatedRoute) {
+
+  }
+  async ngOnInit() {
+    let cartId = this.shoppingCartService.getOrCreateCartId();
+    this.cart$ = await this.shoppingCartService.getCart(cartId);
+    this.populateProducts();
+  }
+
+// PRIVATE -----------------------------------------------------
+
+  private populateProducts() {
+    this.productService.getAll()
       .pipe(
       switchMap(products => {
         this.products = products
-        return route.queryParamMap;
+        return this.route.queryParamMap;
       })
      ).subscribe(params => {
         this.category = params.get('category');
-      
-        this.filteredProducts = (this.category) ?
-          this.products.filter(prod => prod.category === this.category) :
-          this.products;
+       this.applyFilters();
+
       });
   }
 
-  
-  async ngOnInit() {
-    let cartId = this.shoppingCartService.getOrCreateCartId();
-
-   this.subscription = (await this.shoppingCartService
-     .getCart(cartId)).subscribe(cart => {
-       this.cart = cart
-      // console.log('Products Cart: ', cart);
-     }
-     );
-  
-   
+  private applyFilters(){
+      this.filteredProducts = (this.category) ?
+          this.products.filter(prod => prod.category === this.category) :
+          this.products;
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
 }

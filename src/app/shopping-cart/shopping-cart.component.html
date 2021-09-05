@@ -17,7 +17,7 @@
                 <div class="thumbnail" [style.backgroundImage]="'url(' + item.product.imageUrl +')' "></div>
             </td>
             <td>{{ item.product.title }}</td>
-            <td>
+            <td class="text-end">
                 <app-product-quantity  [product]="item.product" [shopping-cart]="shoppingCart"></app-product-quantity>
             </td>
             <td class="text-end">{{ item.totalPrice | currency:'USD':'symbol'}}</td>

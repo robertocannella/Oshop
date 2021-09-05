@@ -1,10 +1,9 @@
 import { map, take } from 'rxjs/operators';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFirestore} from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
-import { Product, ProductId } from './models/app.product';
-import { ShoppingCart, ShoppingCartId, ShoppingCartItem } from './models/shopping-cart';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { forEachChild } from 'typescript';
+import { Product} from './models/app.product';
+import { ShoppingCart, ShoppingCartItem } from './models/shopping-cart';
+import { Observable, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,15 +11,34 @@ import { forEachChild } from 'typescript';
 export class ShoppingCartService {
   subscription!: Subscription;
   constructor(private afs: AngularFirestore) { }
-  
+
+
+  async removeFromCart(product: Product, cartId: string) {
+    this.updateItemQuantity(product, -1, cartId);
+  }
+
+  async addToCart(product: Product, cartId: string) {
+    this.updateItemQuantity(product, 1, cartId);
+  }
+
+  getOrCreateCartId(){
+    let cartId = localStorage.getItem('cartId');
+    if (!cartId) {
+      cartId = this.afs.createId();
+      localStorage.setItem('cartId', cartId)
+      console.log("updated cart Id")
+      return cartId
+    } 
+      
+    return cartId;
+  }
 
   async clearCart(cartId: string) {
-    let $items = await this.getCartItems(cartId)
-
+    let $items = await this.getCartItems(cartId);
     this.subscription = $items.pipe(take(1)).subscribe((x: Array<any>) => {
       x.forEach((item: any) =>
         this.afs.collection('shopping-carts').doc(cartId).collection('items')
-          .doc(item.product.id).delete())
+          .doc(item.product.id).delete());
     });
     
   }
@@ -40,15 +58,17 @@ export class ShoppingCartService {
     return this.afs.collection('shopping-carts').doc(cartId).collection('items').snapshotChanges().pipe(
       map((actions: any) => {
         return actions.map((a: any) => {
-          //console.log(a.payload.doc.data());
           let product = a.payload.doc.data()['product'];
           let quantity = a.payload.doc.data()['quantity'];
           return new ShoppingCartItem(product, quantity);
         })
       })
     );
-  }  
-  async getCartItems(cartId: string) {
+  }
+  
+// PRIVATE -----------------------------------------------------
+
+  private async getCartItems(cartId: string) {
     return this.afs.collection('shopping-carts').doc(cartId).collection('items').valueChanges();
 
   }
@@ -56,10 +76,7 @@ export class ShoppingCartService {
     return this.afs.collection('shopping-carts').doc(cartId).collection('items').doc(productId);
   }
 
-  async updateItemQuantity(product: Product, change: number, cartId: string) {
-    // check for a reference for this product in the current shopping cart
-    // if there is no reference, add it and set quantity to 1
-    // otherwise, increment the quantity
+  private async updateItemQuantity(product: Product, change: number, cartId: string) {
     let item$ = this.getItem(cartId, product.id);
     item$.get().pipe(take(1)).subscribe((item) => {
       let quantity = ((item.data()?.quantity || 0) + change);
@@ -70,28 +87,6 @@ export class ShoppingCartService {
       })
       });
   }
-  async removeFromCart(product: Product, cartId: string) {
-    this.updateItemQuantity(product, -1, cartId);
-  }
 
-  async addToCart(product: Product, cartId: string) {
-    this.updateItemQuantity(product, 1, cartId);
-  }
-  getCartId() {
-    let cartId = localStorage.getItem('cartId');
-    console.log(cartId);
-    return cartId;
-  }
-  getOrCreateCartId(){
-    let cartId = localStorage.getItem('cartId');
-    if (!cartId) {
-      cartId = this.afs.createId();
-      localStorage.setItem('cartId', cartId)
-      console.log("updated cart Id")
-      return cartId
-    } 
-      
-    return cartId;
-  }
 }
 
