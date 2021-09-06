@@ -1,7 +1,10 @@
 <h1>Shopping Cart</h1>
 <div class="row col-8" *ngIf="shoppingCart">
 
-    <p>You have {{ shoppingCart.totalItemsCount }} items in your shopping cart.</p>
+    <p>You have {{ shoppingCart.totalItemsCount }} items in your shopping cart.
+<button (click)="clearCart()" class="btn btn-light btn-sm" [class.disabled]="isEmpty">Clear Cart</button>
+
+    </p>
 <table class="table">
     <thead>
         <tr>
@@ -33,4 +36,4 @@
     </tfoot>
 </table>
 </div>
-<button (click)="clearCart()" class="btn btn-danger btn-sm" [class.disabled]="isEmpty">Clear Cart</button>
+<a class="btn btn-primary btn-sm"routerLink="/check-out"[class.disabled]="isEmpty">Check Out</a>

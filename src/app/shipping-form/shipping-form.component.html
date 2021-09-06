@@ -1,0 +1,61 @@
+<h2>Shipping Information</h2>
+<form [formGroup]="form" (ngSubmit)="placeOrder()">
+    <!-- directive tied to component -->
+    <div class="form-group]">
+        <label for="fullname">Name</label>
+        <input formControlName="fullname" id="fullname" type="text" class="form-control">
+        <div *ngIf="fullname?.touched && fullname?.invalid" class="alert alert-danger">
+            <div *ngIf="fullname?.errors?.required">
+                Name is Required
+            </div>
+            <div *ngIf="fullname?.errors?.minlength">
+                Name should be {{ fullname?.errors?.minlength?.requiredLength}} charaters long.
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="addressLine1">Address Line 1</label>
+        <input formControlName="addressLine1" id="addressLine1" type="text" class="form-control">
+        <div *ngIf="addressLine1?.touched && addressLine1?.invalid" class="alert alert-danger">
+            Address is required.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="addressLine2">Address Line 2</label>
+        <input formControlName="addressLine2" id="addressLine2" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="city">City</label>
+        <input formControlName="city" id="city" type="text" class="form-control">
+        <div *ngIf="city?.touched && city?.invalid" class="alert alert-danger">
+            City is required.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="state">State</label>
+        <input formControlName="state" id="state" type="text" class="form-control">
+        <div *ngIf="state?.touched && state?.invalid" class="alert alert-danger">
+            <div *ngIf="state?.errors?.required">
+                State is Required
+            </div>
+            <div *ngIf="state?.errors?.maxlength || state?.errors?.minlength">
+                State should be exactly {{ state?.errors?.maxlength?.requiredLength ||
+                state?.errors?.minlength?.requiredLength}} charaters long.
+            </div>
+        </div>
+    </div>
+    <div class="form-group]">
+        <label for="zipcode">Zip Code</label>
+        <input formControlName="zipcode" id="zipcode" type="text" class="form-control">
+        <div *ngIf="zipcode?.touched && zipcode?.invalid" class="alert alert-danger">
+            <div *ngIf="zipcode?.errors?.required">
+                Zip Code is Required
+            </div>
+            <div *ngIf="zipcode?.errors?.minlength">
+                Zip Code should be {{ zipcode?.errors?.minlength?.requiredLength}} digits long.
+            </div>
+        </div>
+    </div>
+    <button [disabled]="!form.valid" class="btn btn-primary" type="submit">Place Order</button>
+
+</form>
