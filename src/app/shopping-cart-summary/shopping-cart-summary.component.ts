@@ -8,7 +8,4 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ShoppingCartSummaryComponent {
   @Input('cart') cart!: ShoppingCart;
-
-
-
 }

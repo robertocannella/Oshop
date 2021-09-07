@@ -1,5 +1,4 @@
 import { ShoppingCartService } from './shopping-cart.service';
-import { ShoppingCart } from './models/shopping-cart';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
 

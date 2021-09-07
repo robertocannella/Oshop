@@ -1,1 +1,11 @@
-<p>order-success works!</p>
+<div *ngIf="cart$ | async as cart">
+<ul class="list-group" >
+    <li class="list-group-item" *ngFor="let item of cart.items" >
+        {{ item.product.title }} 
+        {{ item.quantity }}
+        {{ item.product.price | currency:'USD':'symbol'}}
+        {{ item.totalPrice | currency:'USD':'symbol'}}
+    </li>
+    <li>{{ cart.totalPrice }}</li>
+</ul>
+</div>

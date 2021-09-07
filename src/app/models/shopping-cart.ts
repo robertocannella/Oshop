@@ -4,12 +4,10 @@ import { Product } from 'src/app/models/app.product';
 
 export class ShoppingCart {
     dateCreated!: number;
-
+    id?: string;
     constructor(public items: ShoppingCartItem[]) { }
     
-    get cartItems() {
-        return this.items
-    }
+
     get totalPrice(): number {
         let sum = 0
         for (let i in this.items) {
@@ -49,6 +47,5 @@ export class ShoppingCartItem {
 }
 
 export interface ShoppingCartId extends ShoppingCart{
-    
     id: string
 }

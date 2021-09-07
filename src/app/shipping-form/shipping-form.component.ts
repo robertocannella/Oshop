@@ -1,5 +1,5 @@
 import { ShoppingCart } from './../models/shopping-cart';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -12,7 +12,8 @@ import { OrderService } from '../order.service';
   templateUrl: './shipping-form.component.html',
   styleUrls: ['./shipping-form.component.css']
 })
-export class ShippingFormComponent implements OnInit {
+export class ShippingFormComponent implements OnInit, OnDestroy
+ {
   @Input('shoppingCart') shoppingCart!: ShoppingCart;
   userSubscription!: Subscription;
   userId!: string | undefined;
@@ -52,6 +53,9 @@ form = new FormGroup({
   async ngOnInit() {
 
     this.userSubscription = this.authService.user$.subscribe(user => this.userId = user?.uid)
+  }
+  ngOnDestroy() {
+    this.userSubscription.unsubscribe();
   }
     async placeOrder() {
     let order = new Order(this.userId, this.form.value, this.shoppingCart);

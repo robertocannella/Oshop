@@ -1,8 +1,8 @@
-import { map, take } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { AngularFirestore} from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
 import { Product} from './models/app.product';
-import { ShoppingCart, ShoppingCartItem } from './models/shopping-cart';
+import { ShoppingCart, ShoppingCartId, ShoppingCartItem } from './models/shopping-cart';
 import { Observable, Subscription } from 'rxjs';
 
 @Injectable({
@@ -23,13 +23,10 @@ export class ShoppingCartService {
 
   getOrCreateCartId(){
     let cartId = localStorage.getItem('cartId');
-    if (!cartId) {
-      cartId = this.afs.createId();
-      localStorage.setItem('cartId', cartId)
-      console.log("updated cart Id")
-      return cartId
-    } 
-      
+    if (cartId) return cartId;
+   
+    cartId = this.afs.createId();
+    localStorage.setItem('cartId', cartId);
     return cartId;
   }
 
@@ -50,21 +47,18 @@ export class ShoppingCartService {
       })
     );
   }
-// Currently this ShoppingCartItem is mapped into a ShoppingCart object from calling component.
-// Look to use rxjs operators to accomplish all of the logic here, possible store the array inside
-// one observable and supply it to the next as a parameter- Roberto Cannella
   
-  async getCartItemsAsObject(cartId: string): Promise<Observable<ShoppingCartItem[]>> {
-    return this.afs.collection('shopping-carts').doc(cartId).collection('items').snapshotChanges().pipe(
+ async getCartV2(cartId: string): Promise<Observable<ShoppingCart>> {
+  return this.afs.collection('shopping-carts').doc(cartId).collection('items').snapshotChanges().pipe(
       map((actions: any) => {
-        return actions.map((a: any) => {
-          let product = a.payload.doc.data()['product'];
-          let quantity = a.payload.doc.data()['quantity'];
-          return new ShoppingCartItem(product, quantity);
+              return actions.map((a: any) => {
+                let product = a.payload.doc.data()['product'];
+                let quantity = a.payload.doc.data()['quantity'];
+                   return new ShoppingCartItem(product, quantity);
         })
-      })
-    );
-  }
+      }),map((data) => new ShoppingCart(data))
+    )
+ }
   
 // PRIVATE -----------------------------------------------------
 

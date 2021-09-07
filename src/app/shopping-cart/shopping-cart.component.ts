@@ -1,7 +1,7 @@
-import { ShoppingCart, ShoppingCartItem } from './../models/shopping-cart';
-import { Observable, Subscription } from 'rxjs';
+import { ShoppingCart } from './../models/shopping-cart';
+import { Observable } from 'rxjs';
 import { ShoppingCartService } from './../shopping-cart.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -9,34 +9,19 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
   styleUrls: ['./shopping-cart.component.css']
 })
   
-export class ShoppingCartComponent implements OnInit, OnDestroy {
+export class ShoppingCartComponent implements OnInit{
 
-  cart$!: Observable<ShoppingCartItem[]>;
-  shoppingCart!: ShoppingCart;
-  subscription!: Subscription;
-  isEmpty = true;
+  cart$!: Observable<ShoppingCart>;
 
   constructor(private cartSerive: ShoppingCartService) { }
 
   async ngOnInit() {
-
     let cartId = this.cartSerive.getOrCreateCartId();
-    this.cart$ = await this.cartSerive.getCartItemsAsObject(cartId);
-
-    this.subscription = this.cart$.subscribe((shoppingCartItemArray: ShoppingCartItem[]) => {
-      this.shoppingCart = new ShoppingCart(shoppingCartItemArray);
-      this.isEmpty = (this.shoppingCart.totalItemsCount == 0);
-    });
-
-    
+    this.cart$ = await this.cartSerive.getCartV2(cartId);
   }
 
   clearCart() {
     let cartId = this.cartSerive.getOrCreateCartId();
     this.cartSerive.clearCart(cartId);
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 }
