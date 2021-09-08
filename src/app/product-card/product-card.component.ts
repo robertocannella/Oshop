@@ -13,14 +13,11 @@ export class ProductCardComponent  {
   @Input('show-actions') showActions = true;
   @Input('shopping-cart') shoppingCart!: ShoppingCart;
 
-  cartId;
-    constructor(private cartService: ShoppingCartService) {
-      this.cartId = this.cartService.getOrCreateCartId();
-  }
+    constructor(private cartService: ShoppingCartService) {}
 
   addToCart() {
     
-    this.cartService.addToCart(this.product, this.cartId);
+    this.cartService.addToCart(this.product);
   }
   
 }

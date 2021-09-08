@@ -15,8 +15,7 @@ export class OrderSuccessComponent implements OnInit {
   constructor(private cartServce: ShoppingCartService) { }
 
   async ngOnInit() {
-    let cartId = this.cartServce.getOrCreateCartId()
-    this.cart$ = await this.cartServce.getCartV2(cartId);
+    this.cart$ = await this.cartServce.getCart();
   }
 
 }

@@ -33,8 +33,7 @@ export class BsNavbarComponent implements OnInit {
       }
     );
     
-    let cartId = this.cartService.getOrCreateCartId();
-    this.cart$ = await this.cartService.getCart(cartId);
+    this.cart$ = await this.cartService.getCart();
   }
   toggle() {
     this.miniMenuToggle = !this.miniMenuToggle;

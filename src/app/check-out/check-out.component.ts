@@ -14,7 +14,6 @@ export class CheckOutComponent implements OnInit {
   constructor(private cartService: ShoppingCartService) { }
 
   async ngOnInit() {
-    let cartId = this.cartService.getOrCreateCartId();
-    this.cart$ = await this.cartService.getCartV2(cartId);
+    this.cart$ = await this.cartService.getCart();
   }
 }

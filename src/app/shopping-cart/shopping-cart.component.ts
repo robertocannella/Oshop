@@ -16,12 +16,10 @@ export class ShoppingCartComponent implements OnInit{
   constructor(private cartSerive: ShoppingCartService) { }
 
   async ngOnInit() {
-    let cartId = this.cartSerive.getOrCreateCartId();
-    this.cart$ = await this.cartSerive.getCartV2(cartId);
+    this.cart$ = await this.cartSerive.getCart();
   }
 
   clearCart() {
-    let cartId = this.cartSerive.getOrCreateCartId();
-    this.cartSerive.clearCart(cartId);
+    this.cartSerive.clearCart();
   }
 }
