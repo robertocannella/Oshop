@@ -13,13 +13,13 @@ export class ShoppingCartComponent implements OnInit{
 
   cart$!: Observable<ShoppingCart>;
 
-  constructor(private cartSerive: ShoppingCartService) { }
+  constructor(private cartService: ShoppingCartService) { }
 
   async ngOnInit() {
-    this.cart$ = await this.cartSerive.getCart();
+    this.cart$ = await this.cartService.getCart();
   }
 
   clearCart() {
-    this.cartSerive.clearCart();
+    this.cartService.clearCart();
   }
 }
